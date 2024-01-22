@@ -15,6 +15,17 @@ val fizzbuzz : (IntRange) -> String = { range ->
             x % 3 == 0  && x % 5 == 0 -> "FIZZBUZZ"
             x % 5 == 0 -> "BUZZ"
             x % 3 == 0 -> "FIZZ"
+            else -> ""
+        }
+    }.fold("") { acc, str -> acc + str }
+}
+
+val fizzbuzzdoh : (IntRange) -> String = { range ->
+    range.map { x ->
+        when {
+            x % 3 == 0  && x % 5 == 0 -> "FIZZBUZZ"
+            x % 5 == 0 -> "BUZZ"
+            x % 3 == 0 -> "FIZZ"
             x % 7 == 0 -> "DOH!"
             else -> ""
         }
@@ -30,6 +41,21 @@ if (fizzbuzz(1..3) == "FIZZ")
 if (fizzbuzz(1..5) == "FIZZBUZZ")
     println("Success!")
 */
+
+// fizzBuzzGen function
+fun fizzbuzzgen(divisorMap: Map<Int, String>): (IntRange) -> String {
+    return { range ->
+        range.map {
+            val parts = divisorMap.entries
+                .filter { num -> it % num.key == 0 }
+                .map { entry -> entry.value }
+
+            if (parts.isNotEmpty()) parts.joinToString("") else ""
+        }.joinToString("")
+    }
+}
+
+
 
 // This is a utility function for your use as you choose, and as an
 // example of an extension method
@@ -50,12 +76,12 @@ val r1 = {
     }
 }
 
-// Create r2 as a lambda that calls process() with message "FOO" and a block that upper-cases 
+// Create r2 as a lambda that calls process() with message "FOO" and a block that upper-cases
 // r2_message, and repeats it three times with no spaces: "WOOGAWOOGAWOOGA"
 val r2_message = "wooga"
 val r2 = {
     process("FOO") {
-        r2_message.uppercase().repeat(3)
+        r2_message.toUpperCase().repeat(3)
     }
 }
 
@@ -64,7 +90,7 @@ val r2 = {
 enum class Philosopher {
     THINKING {
         override fun toString(): String {
-            return "Deep thoughts..."
+            return "Deep thoughts...."
         }
     },
     TALKING {
@@ -72,8 +98,11 @@ enum class Philosopher {
             return "Allow me to suggest an idea..."
         }
     };
-    fun signal(nextState: Philosopher): Philosopher {
-        return nextState
+    fun signal(): Philosopher {
+        return when (this) {
+            THINKING -> TALKING
+            TALKING -> THINKING
+        }
     }
  }
 
